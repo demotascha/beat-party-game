@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>同學會卡點大考驗 | Say the Word on Beat</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+</head>
+<body>
+
+  <!-- 頂部功能列 -->
+  <header class="top-header">
+    <div class="brand">
+      <span class="brand-icon">⚡</span>
+      <div>
+        <div class="brand-title">同學會卡點大考驗</div>
+        <div class="brand-subtitle">Say the Word on Beat • Party Edition</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button id="btnRoster" class="btn" title="管理 20 位老同學照片與姓名">
+        👥 人員名冊 (20人)
+      </button>
+      <button id="btnFullscreen" class="btn btn-primary" title="一鍵全螢幕投影到電視或投影機">
+        📺 全螢幕投影
+      </button>
+    </div>
+  </header>
+
+  <!-- 關卡難度切換列 -->
+  <nav class="control-bar">
+    <div class="level-tabs">
+      <div class="level-tab active" data-level="1">
+        <span>Level 1 簡單模式</span>
+        <span class="level-badge">2 人 • 92 BPM</span>
+      </div>
+      <div class="level-tab" data-level="2">
+        <span>Level 2 進階模式</span>
+        <span class="level-badge">3 人 • 106 BPM</span>
+      </div>
+      <div class="level-tab" data-level="3">
+        <span>Level 3 魔王地獄</span>
+        <span class="level-badge">4 人 • 120 BPM</span>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 遊戲主舞台 -->
+  <main class="main-container">
+    
+    <!-- 節拍與提示橫幅 -->
+    <div class="beat-status-banner">
+      <div id="promptText" class="beat-prompt-text">按空白鍵開始卡點！</div>
+      <div class="beat-dots-container">
+        <div class="beat-dot"></div>
+        <div class="beat-dot"></div>
+        <div class="beat-dot"></div>
+        <div class="beat-dot"></div>
+      </div>
+    </div>
+
+    <!-- 8 宮格同學展示卡牌 -->
+    <div id="gridContainer" class="grid-container">
+      <!-- 8 格由 app.js 動態渲染 -->
+    </div>
+
+    <!-- 裁判計分與遊戲控制區 -->
+    <div class="game-controls">
+      <button id="btnToggle" class="btn btn-primary btn-game-toggle">
+        ▶ 開始卡點 (Space)
+      </button>
+
+      <div class="referee-board">
+        <div class="referee-stat">
+          <span class="referee-stat-label">累積得分</span>
+          <span id="scoreValue" class="referee-stat-value stat-success">0</span>
+        </div>
+        <button id="btnSuccess" class="btn btn-referee btn-primary" title="快捷鍵: ↑ 或 O">
+          ⭕ 成功 (+1)
+        </button>
+        <div class="referee-stat">
+          <span class="referee-stat-label">罰酒次數</span>
+          <span id="penaltyValue" class="referee-stat-value stat-penalty">0</span>
+        </div>
+        <button id="btnWrong" class="btn btn-referee btn-danger" title="快捷鍵: ↓ 或 X">
+          ❌ 喊錯 (罰酒🍺)
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 人員名冊管理彈出視窗 (Modal) -->
+  <div id="modalRoster" class="modal-overlay">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">👥 20 位同學名冊管理</div>
+        <button id="btnCloseModal" class="modal-close" aria-label="關閉">&times;</button>
+      </div>
+      <div class="modal-toolbar">
+        <div>
+          <button id="btnBatchUpload" class="btn btn-primary">
+            📁 批次選取老同學照片 (最多 20 張)
+          </button>
+          <input type="file" id="batchFileInput" accept="image/*" multiple style="display:none;">
+          <input type="file" id="singleFileInput" accept="image/*" style="display:none;">
+        </div>
+        <button id="btnResetRoster" class="btn">
+          🔄 恢復預設向量頭像
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="rosterGrid" class="roster-grid">
+          <!-- 20 位名冊卡片 -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 浮動提示 Toast -->
+  <div id="toastNotice" class="toast-notice">
+    <span id="toastText">提示訊息</span>
+  </div>
+
+  <script src="audio.js"></script>
+  <script src="roster.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
