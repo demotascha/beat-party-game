@@ -1,0 +1,7 @@
+node_modules
+.git
+.DS_Store
+*.zip
+rooms-data/*.json
+!rooms-data/.gitkeep
+roster-data.json

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>🎮 2026 節奏挑戰 | 遊戲大廳開局與加入</title>
+  <link rel="stylesheet" href="style.css?v=2026">
+  <style>
+    *, *::before, *::after {
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+      box-sizing: border-box;
+    }
+    body {
+      background: radial-gradient(circle at 50% 20%, #1a1e38 0%, #0b0d19 100%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: #fff;
+    }
+    .lobby-container {
+      width: 100%;
+      max-width: 480px;
+      background: rgba(20, 24, 43, 0.95);
+      border: 2px solid rgba(0, 255, 136, 0.4);
+      border-radius: 28px;
+      padding: 32px 24px;
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 255, 136, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+      backdrop-filter: blur(12px);
+    }
+    .lobby-logo {
+      font-size: 56px;
+      filter: drop-shadow(0 0 16px #ff007f);
+      animation: bounce 2s infinite ease-in-out;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .lobby-title {
+      font-size: 26px;
+      font-weight: 900;
+      background: linear-gradient(135deg, #00ff88, #00d2ff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .lobby-subtitle {
+      font-size: 13px;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: -14px;
+    }
+    .lobby-card {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 18px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .lobby-card-title {
+      font-size: 15px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .room-input {
+      width: 100%;
+      padding: 14px 16px;
+      font-size: 22px;
+      font-weight: 900;
+      letter-spacing: 6px;
+      text-align: center;
+      text-transform: uppercase;
+      border-radius: 14px;
+      border: 2px solid rgba(0, 210, 255, 0.5);
+      background: rgba(10, 14, 28, 0.85);
+      color: #00d2ff;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+    .room-input:focus {
+      border-color: #00ff88;
+      box-shadow: 0 0 16px rgba(0, 255, 136, 0.4);
+    }
+    .btn-lobby {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 800;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn-lobby:active {
+      transform: scale(0.98);
+    }
+    .btn-create {
+      background: linear-gradient(135deg, #00ff88, #00b359);
+      color: #0b0d19;
+      box-shadow: 0 4px 18px rgba(0, 255, 136, 0.35);
+    }
+    .btn-join {
+      background: linear-gradient(135deg, #00d2ff, #0077ff);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(0, 210, 255, 0.35);
+    }
+    .btn-join-player {
+      background: linear-gradient(135deg, #ff007f, #ff5500);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(255, 0, 127, 0.35);
+    }
+    .lobby-badge {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #aaa;
+    }
+    .recent-rooms {
+      width: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+    }
+    .recent-chip {
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: rgba(0, 210, 255, 0.12);
+      border: 1px solid rgba(0, 210, 255, 0.35);
+      color: #00d2ff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 1px;
+    }
+    .recent-chip:hover {
+      background: rgba(0, 210, 255, 0.25);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="lobby-container">
+    <div class="lobby-logo">🎵</div>
+    <div>
+      <div class="lobby-title">2026 節奏挑戰</div>
+      <div class="lobby-subtitle">多場次獨立開局 • 房間互不干擾</div>
+    </div>
+
+    <!-- 區塊 1：主持人快速開局 -->
+    <div class="lobby-card" style="border-color: rgba(0, 255, 136, 0.35);">
+      <div class="lobby-card-title" style="color: var(--neon-green);">
+        <span>👑 我是主持人 / 主辦方</span>
+        <span class="lobby-badge">一鍵開局</span>
+      </div>
+      <div style="font-size: 12px; color: var(--text-muted); line-height: 1.5;">
+        立即生成一組專屬 5 碼房間代碼（如 <code style="color:#00ff88;font-weight:bold;">A8K2M</code>），獨立存放大人小孩名冊、拍照頭像與應援干擾。
+      </div>
+      <button type="button" id="btnCreateRoom" class="btn-lobby btn-create">
+        ✨ 建立專屬新場次（開局大螢幕）
+      </button>
+    </div>
+
+    <!-- 區塊 2：輸入 5 碼隨機碼進入 -->
+    <div class="lobby-card" style="border-color: rgba(0, 210, 255, 0.35);">
+      <div class="lobby-card-title" style="color: var(--neon-blue);">
+        <span>🔑 輸入 5 碼房間碼進入</span>
+      </div>
+      <input type="text" id="inputRoomCode" class="room-input" placeholder="例如 A8K2M" maxlength="5" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 4px;">
+        <button type="button" id="btnJoinHost" class="btn-lobby btn-join" title="以大螢幕主舞台模式進入">
+          📺 主螢幕舞台
+        </button>
+        <button type="button" id="btnJoinPlayer" class="btn-lobby btn-join-player" title="以手機拍照報名與應援模式進入">
+          📱 手機報名應援
+        </button>
+      </div>
+
+      <!-- 最近進入過的場次快捷點擊 -->
+      <div id="recentRoomsBox" style="display:none;margin-top:6px;">
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:6px;text-align:center;">最近使用過的場次：</div>
+        <div id="recentRoomsList" class="recent-rooms"></div>
+      </div>
+    </div>
+
+    <div id="statusTip" style="font-size: 13px; color: var(--neon-pink); text-align: center; min-height: 18px; font-weight: bold;"></div>
+  </div>
+
+  <script>
+    const inputRoomCode = document.getElementById('inputRoomCode');
+    const btnCreateRoom = document.getElementById('btnCreateRoom');
+    const btnJoinHost = document.getElementById('btnJoinHost');
+    const btnJoinPlayer = document.getElementById('btnJoinPlayer');
+    const statusTip = document.getElementById('statusTip');
+    const recentRoomsBox = document.getElementById('recentRoomsBox');
+    const recentRoomsList = document.getElementById('recentRoomsList');
+
+    function saveRecentRoom(code) {
+      if (!code) return;
+      try {
+        let list = JSON.parse(localStorage.getItem('beat_game_recent_rooms') || '[]');
+        list = [code, ...list.filter(c => c !== code)].slice(0, 5);
+        localStorage.setItem('beat_game_recent_rooms', JSON.stringify(list));
+      } catch (e) {}
+    }
+
+    function renderRecentRooms() {
+      try {
+        const list = JSON.parse(localStorage.getItem('beat_game_recent_rooms') || '[]');
+        if (list.length > 0) {
+          recentRoomsList.innerHTML = '';
+          list.forEach(c => {
+            const btn = document.createElement('div');
+            btn.className = 'recent-chip';
+            btn.textContent = `📍 ${c}`;
+            btn.onclick = () => {
+              inputRoomCode.value = c;
+              statusTip.textContent = `已選取場次：${c}`;
+            };
+            recentRoomsList.appendChild(btn);
+          });
+          recentRoomsBox.style.display = 'block';
+        }
+      } catch (e) {}
+    }
+    renderRecentRooms();
+
+    // 格式化輸入：自動轉大寫、限制 5 碼英數字
+    inputRoomCode.addEventListener('input', () => {
+      inputRoomCode.value = inputRoomCode.value.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 5);
+      statusTip.textContent = '';
+    });
+
+    // 1. 建立新場次
+    btnCreateRoom.onclick = async () => {
+      statusTip.textContent = '⏳ 正在建立專屬場次...';
+      try {
+        const res = await fetch('/api/room/create', { method: 'POST' });
+        const data = await res.json();
+        if (data.ok && data.roomId) {
+          saveRecentRoom(data.roomId);
+          statusTip.textContent = `🎉 開局成功！場次代碼：${data.roomId}，正在進入主舞台...`;
+          setTimeout(() => {
+            location.href = `index.html?room=${data.roomId}`;
+          }, 600);
+          return;
+        }
+      } catch (e) {}
+      // 單機/離線模式 fallback
+      const fallbackCode = Math.random().toString(36).substring(2, 7).toUpperCase();
+      saveRecentRoom(fallbackCode);
+      location.href = `index.html?room=${fallbackCode}`;
+    };
+
+    function validateCode() {
+      const code = inputRoomCode.value.trim().toUpperCase();
+      if (!code || code.length < 3) {
+        statusTip.textContent = '⚠️ 請輸入正確的場次房間碼（例如 A8K2M）！';
+        inputRoomCode.focus();
+        return null;
+      }
+      return code;
+    }
+
+    async function checkRoomExists(code) {
+      try {
+        const res = await fetch(`/api/room/check?room=${encodeURIComponent(code)}`);
+        const data = await res.json();
+        return !!(data.ok && data.exists);
+      } catch (e) {
+        return false;
+      }
+    }
+
+    // 2. 以大螢幕舞台進入
+    btnJoinHost.onclick = async () => {
+      const code = validateCode();
+      if (!code) return;
+      statusTip.textContent = '⏳ 正在驗證場次房間是否存在...';
+      const exists = await checkRoomExists(code);
+      if (!exists) {
+        statusTip.textContent = `❌ 房間代碼【${code}】不存在或已結束！請確認號碼或由主持人新開局`;
+        return;
+      }
+      saveRecentRoom(code);
+      location.href = `index.html?room=${code}`;
+    };
+
+    // 3. 以手機報名應援模式進入
+    btnJoinPlayer.onclick = async () => {
+      const code = validateCode();
+      if (!code) return;
+      statusTip.textContent = '⏳ 正在驗證場次房間是否存在...';
+      const exists = await checkRoomExists(code);
+      if (!exists) {
+        statusTip.textContent = `❌ 房間代碼【${code}】不存在或已結束！請向主持人索取正確號碼`;
+        return;
+      }
+      saveRecentRoom(code);
+      location.href = `join.html?room=${code}`;
+    };
+
+    inputRoomCode.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') btnJoinHost.click();
+    });
+  </script>
+</body>
+</html>

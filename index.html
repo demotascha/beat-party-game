@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>同學會卡點大考驗 | Say the Word on Beat</title>
+  <title>2026 節奏挑戰 | Say the Word on Beat</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20width=%22100%22%20height=%22100%22><text y=%22.9em%22 font-size=%2290%22>🎵</text></svg>">
 </head>
+
 <body>
 
   <!-- 頂部功能列 -->
@@ -14,13 +17,34 @@
     <div class="brand">
       <span class="brand-icon">⚡</span>
       <div>
-        <div class="brand-title">同學會卡點大考驗</div>
+        <div class="brand-title">
+          2026 節奏挑戰
+          <span id="roomBadgeDisplay"
+            style="font-size:14px;background:rgba(0,255,136,0.18);color:#00ff88;padding:2px 8px;border-radius:8px;border:1px solid #00ff88;margin-left:6px;letter-spacing:1px;font-family:monospace;">房間:
+            DEFAULT</span>
+          <span id="onlineCountBadge"
+            style="font-size:13px;background:rgba(0,210,255,0.18);color:#00d2ff;padding:2px 8px;border-radius:8px;border:1px solid #00d2ff;margin-left:6px;font-weight:700;">🟢
+            1 人在線上</span>
+        </div>
         <div class="brand-subtitle">Say the Word on Beat • Party Edition</div>
       </div>
     </div>
     <div class="header-actions">
-      <button id="btnRoster" class="btn" title="管理 20 位老同學照片與姓名">
-        👥 人員名冊 (20人)
+      <a href="lobby.html" class="btn" title="回遊戲大廳更換場次" style="border-color:rgba(255,255,255,0.3);">
+        🏠 大廳
+      </a>
+      <button id="btnMusicToggle" class="btn" title="全部音效開關">
+        <span id="musicStatusText">🔊</span>
+      </button>
+      <button id="btnSabotageToggle" class="btn" title="開啟或關閉觀眾手機的干擾道具功能">
+        😈 干擾: <span id="sabotageStatusText">開啟</span>
+      </button>
+      <button id="btnSettings" class="btn" title="音樂與節奏設定">⚙️ 設定</button>
+      <a id="linkJoinPage" href="join.html" target="_blank" class="btn" title="開啟參與者手機自助上傳頁面 (支援 ngrok 分享)">
+        📱 手機報名 (<span id="joinRoomText">DEFAULT</span>)
+      </a>
+      <button id="btnRoster" class="btn" title="管理大人與小孩名冊照片與姓名">
+        👥 人員名冊 (<span id="rosterBtnLabel">大人 30人</span>)
       </button>
       <button id="btnFullscreen" class="btn btn-primary" title="一鍵全螢幕投影到電視或投影機">
         📺 全螢幕投影
@@ -31,34 +55,37 @@
   <!-- 關卡難度切換列 -->
   <nav class="control-bar">
     <div class="level-tabs">
+      <div class="level-tab" data-level="w1">
+        <span>🐾 熱身 1 動物大集合</span>
+      </div>
+      <div class="level-tab" data-level="w2">
+        <span>🍎 熱身 2 水果大集合</span>
+      </div>
+      <div class="level-tab" data-level="w3">
+        <span>🎨 熱身 3 顏色大集合</span>
+      </div>
       <div class="level-tab active" data-level="1">
         <span>Level 1 簡單模式</span>
-        <span class="level-badge">2 人 • 92 BPM</span>
       </div>
       <div class="level-tab" data-level="2">
         <span>Level 2 進階模式</span>
-        <span class="level-badge">3 人 • 106 BPM</span>
       </div>
       <div class="level-tab" data-level="3">
-        <span>Level 3 魔王地獄</span>
-        <span class="level-badge">4 人 • 120 BPM</span>
+        <span>Level 3 魔王模式</span>
+      </div>
+    </div>
+    <div class="level-tabs">
+      <div id="tabMainAdult" class="level-tab active" data-roster-group="adult">
+        <span>🧑 大人題庫 (30人)</span>
+      </div>
+      <div id="tabMainChild" class="level-tab" data-roster-group="child">
+        <span>🧒 小孩題庫 (20人)</span>
       </div>
     </div>
   </nav>
 
   <!-- 遊戲主舞台 -->
   <main class="main-container">
-    
-    <!-- 節拍與提示橫幅 -->
-    <div class="beat-status-banner">
-      <div id="promptText" class="beat-prompt-text">按空白鍵開始卡點！</div>
-      <div class="beat-dots-container">
-        <div class="beat-dot"></div>
-        <div class="beat-dot"></div>
-        <div class="beat-dot"></div>
-        <div class="beat-dot"></div>
-      </div>
-    </div>
 
     <!-- 8 宮格同學展示卡牌 -->
     <div id="gridContainer" class="grid-container">
@@ -70,6 +97,9 @@
       <button id="btnToggle" class="btn btn-primary btn-game-toggle">
         ▶ 開始卡點 (Space)
       </button>
+      <button id="btnRedraw" class="btn btn-game-toggle" title="重新隨機抽取本局 8 宮格圖片 (快捷鍵: R)">
+        🎲 重新抽圖片
+      </button>
 
       <div class="referee-board">
         <div class="referee-stat">
@@ -80,12 +110,18 @@
           ⭕ 成功 (+1)
         </button>
         <div class="referee-stat">
-          <span class="referee-stat-label">罰酒次數</span>
+          <span class="referee-stat-label">挑戰失敗</span>
           <span id="penaltyValue" class="referee-stat-value stat-penalty">0</span>
         </div>
         <button id="btnWrong" class="btn btn-referee btn-danger" title="快捷鍵: ↓ 或 X">
-          ❌ 喊錯 (罰酒🍺)
+          ❌ 挑戰失敗
         </button>
+        <button id="btnResetScore" class="btn btn-referee" title="將累積得分與挑戰失敗次數歸零重新計算">
+          🔄 重新計算
+        </button>
+      </div>
+      <div class="round-info">
+        ROUND <span id="roundValue">1 / 5</span> • <span id="bpmValue">183</span> BPM
       </div>
     </div>
 
@@ -95,14 +131,29 @@
   <div id="modalRoster" class="modal-overlay">
     <div class="modal-content">
       <div class="modal-header">
-        <div class="modal-title">👥 20 位同學名冊管理</div>
+        <div class="modal-title">👥 人員名冊管理</div>
+        <div class="roster-group-tabs">
+          <button type="button" id="btnGroupAdult" class="btn btn-primary" data-group="adult"
+            onclick="window.gameApp && window.gameApp.switchRosterGroup('adult')">🧑 大人 (最多 30 位)</button>
+          <button type="button" id="btnGroupChild" class="btn" data-group="child"
+            onclick="window.gameApp && window.gameApp.switchRosterGroup('child')">🧒 小孩 (最多 20 位)</button>
+        </div>
         <button id="btnCloseModal" class="modal-close" aria-label="關閉">&times;</button>
       </div>
       <div class="modal-toolbar">
-        <div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
           <button id="btnBatchUpload" class="btn btn-primary">
-            📁 批次選取老同學照片 (最多 20 張)
+            📁 批次選取大人照片
           </button>
+          <button id="btnAddPerson" class="btn" style="border-color:var(--neon-green);color:var(--neon-green);">
+            ➕ 新增一位名額
+          </button>
+          <label
+            style="display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--neon-yellow);cursor:pointer;">
+            <input type="checkbox" id="checkOnlyUploaded"
+              style="width:18px;height:18px;accent-color:var(--neon-green);cursor:pointer;">
+            <span>僅從已上傳人物中進行選取 (<span id="uploadedCountLabel">已上傳 0 位</span>)</span>
+          </label>
           <input type="file" id="batchFileInput" accept="image/*" multiple style="display:none;">
           <input type="file" id="singleFileInput" accept="image/*" style="display:none;">
         </div>
@@ -112,10 +163,69 @@
       </div>
       <div class="modal-body">
         <div id="rosterGrid" class="roster-grid">
-          <!-- 20 位名冊卡片 -->
+          <!-- 名冊卡片 -->
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- 設定 Modal -->
+  <div id="modalSettings" class="modal-overlay">
+    <div class="modal-content settings-content">
+      <div class="modal-header">
+        <div class="modal-title">⚙️ 音樂與節奏設定</div>
+        <button id="btnCloseSettings" class="modal-close" aria-label="關閉">&times;</button>
+      </div>
+      <div class="modal-body settings-body">
+        <div class="setting-row col">
+          <label for="sliderBpm">節奏速度 (beats.mp3 原曲標準 183 BPM)：<b id="sliderBpmVal">183 BPM</b></label>
+          <input type="range" id="sliderBpm" min="80" max="220" step="0.5" value="183">
+          <div class="setting-hint"><span>慢速 80</span><span>原曲標準 183 BPM</span><span>極限 220</span></div>
+        </div>
+        <div class="setting-row col">
+          <label for="sliderGap">每輪之間間隔拍數：<b id="sliderGapVal">0 拍</b></label>
+          <input type="range" id="sliderGap" min="0" max="4" step="0.5" value="0">
+          <div class="setting-hint"><span>無縫 0 拍</span><span>半小節 2 拍</span><span>一小節 4 拍</span></div>
+        </div>
+        <div class="setting-row col">
+          <label for="sliderOffset">音畫同步微調 (若格子太早亮往左、太晚亮往右)：<b id="sliderOffsetVal">0 ms</b></label>
+          <input type="range" id="sliderOffset" min="-500" max="500" step="10" value="0">
+          <div class="setting-hint"><span>提早 -500ms</span><span>預設 0ms</span><span>延後 +500ms</span></div>
+        </div>
+        <div class="setting-row col">
+          <label for="sliderIntro">前奏秒數 (beats.mp3 預設 0 秒)：<b id="sliderIntroVal">0 s</b></label>
+          <input type="range" id="sliderIntro" min="0" max="4" step="0.1" value="0">
+        </div>
+        <div class="setting-row col">
+          <label for="selectRounds">每關挑戰局數</label>
+          <select id="selectRounds">
+            <option value="3" selected>3 局 (快速熱場)</option>
+            <option value="5">5 局 (精選標準)</option>
+            <option value="8">8 局 (深度比拼)</option>
+            <option value="10">10 局 (與原影片相同)</option>
+          </select>
+        </div>
+        <div class="setting-row">
+          <div>
+            <div>允許玩家發動「瑪利歐道具干擾」</div>
+            <div class="setting-hint">關閉後玩家仍可發送 Emoji 與文字應援，但無法干擾畫面</div>
+          </div>
+          <input type="checkbox" id="checkSabotage" checked>
+        </div>
+        <button id="btnSaveSettings" class="btn btn-primary" style="width:100%;justify-content:center;">儲存設定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 關卡預覽 70% 視窗 Drawer -->
+  <div id="drawerOverlay" class="drawer-overlay"></div>
+  <div id="levelPreviewDrawer" class="level-drawer">
+    <div class="drawer-header">
+      <div class="drawer-title" id="drawerTitle">關卡預覽</div>
+      <button type="button" id="btnCloseDrawer" class="btn btn-close-drawer">✕ 關閉預覽</button>
+    </div>
+    <div class="drawer-hint" id="drawerHint">此關卡隨機挑戰候選圖片池如下：</div>
+    <div class="drawer-pool-grid" id="drawerPoolGrid"></div>
   </div>
 
   <!-- 浮動提示 Toast -->
@@ -123,8 +233,19 @@
     <span id="toastText">提示訊息</span>
   </div>
 
-  <script src="audio.js"></script>
-  <script src="roster.js"></script>
-  <script src="app.js"></script>
+  <!-- 即時互動 Emoji / 圖片 / 文字浮動顯示層 (3 秒自動消失) -->
+  <div id="barrageLayer" class="barrage-layer"></div>
+
+  <!-- YouTube Iframe 容器 (自動無縫播放背景音樂) -->
+  <div id="ytPlayerContainer"
+    style="position: fixed; width: 200px; height: 200px; left: 0; bottom: 0; opacity: 0.01; pointer-events: none; z-index: -1;">
+    <div id="ytPlayer"></div>
+  </div>
+
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <script src="audio.js?v=2026"></script>
+  <script src="roster.js?v=2026"></script>
+  <script src="app.js?v=2026"></script>
 </body>
+
 </html>
