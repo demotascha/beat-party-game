@@ -74,6 +74,7 @@ class BeatPartyGame {
     this.bpm = window.rosterManager.activeGroup === 'child' ? this.childBpm : this.adultBpm;
     window.beatAudio.setPlaybackRateByBpm(this.bpm);
     this.roundsPerLevel = saved.rounds || 3;
+    this.warmupPickCount = parseInt(saved.warmupPickCount) || 2;
     this.offsetMs = saved.offsetMs || 0;
     this.introSec = typeof saved.introSec === 'number' ? saved.introSec : 0;
     this.gapBeats = typeof saved.gapBeats === 'number' ? saved.gapBeats : 0;
@@ -104,6 +105,11 @@ class BeatPartyGame {
     this.beatDots = document.querySelectorAll('.beat-dot');
     this.levelTabs = document.querySelectorAll('.level-tab[data-level]');
     this.rosterGroupMainTabs = document.querySelectorAll('.level-tab[data-roster-group]');
+    this.warmupCountSelectWrap = document.getElementById('warmupCountSelectWrap');
+    this.selectWarmupCount = document.getElementById('selectWarmupCount');
+    if (this.selectWarmupCount) {
+      this.selectWarmupCount.value = String(this.warmupPickCount);
+    }
 
     // 房間徽章與手機報名連結
     const roomBadge = document.getElementById('roomBadgeDisplay');
@@ -206,6 +212,18 @@ class BeatPartyGame {
         this.switchRosterGroup(tab.dataset.rosterGroup);
       });
     });
+
+    // 熱身模式抽圖數量自選 (2~6)
+    if (this.selectWarmupCount) {
+      this.selectWarmupCount.addEventListener('change', (e) => {
+        this.warmupPickCount = parseInt(e.target.value) || 2;
+        const saved = JSON.parse(localStorage.getItem('beat_game_settings_v2') || '{}');
+        saved.warmupPickCount = this.warmupPickCount;
+        localStorage.setItem('beat_game_settings_v2', JSON.stringify(saved));
+        this.setupNewRound();
+        this.showToast(`🎲 熱身模式已設定每局隨機抽取 ${this.warmupPickCount} 種圖片！`, '#00d2ff');
+      });
+    }
 
     // 開始 / 暫停按鈕 & 重新抽圖片按鈕
     this.btnToggle.addEventListener('click', () => {
@@ -443,7 +461,8 @@ class BeatPartyGame {
 
     this.drawerTitle.innerHTML = `<span>🎯 ${cfg.label}</span>`;
     if (cfg.dynamicWarmup) {
-      this.drawerHint.innerHTML = `💡 此熱身關卡固定由以下 <b>${pool.length}</b> 種圖片中隨機抽取 <b>2~3</b> 種排列於 8 宮格：`;
+      const warmupCount = Math.max(2, Math.min(6, this.warmupPickCount || 2));
+      this.drawerHint.innerHTML = `💡 此熱身關卡固定由以下 <b>${pool.length}</b> 種圖片中，依設定隨機抽取 <b>${warmupCount}</b> 種圖片排列於 8 宮格：`;
     } else {
       this.drawerHint.innerHTML = `💡 目前為「${groupName}題庫」，隨機從以下候選名冊（共 <b>${pool.length}</b> 位）中抽取 <b>${cfg.count}</b> 位排列於 8 宮格：`;
     }
@@ -483,6 +502,11 @@ class BeatPartyGame {
       tab.classList.toggle('active', tab.dataset.level === lvl);
     });
 
+    const isWarmup = lvl.startsWith('w');
+    if (this.warmupCountSelectWrap) {
+      this.warmupCountSelectWrap.style.display = isWarmup ? 'inline-flex' : 'none';
+    }
+
     const isRunning = this.isPlaying;
     this.stopGame();
     this.setupNewRound();
@@ -499,15 +523,10 @@ class BeatPartyGame {
   setupNewRound() {
     const cfg = this.bpmLevels[this.currentLevel] || this.bpmLevels['1'];
     const pool = cfg.pool ? [...cfg.pool] : window.rosterManager.getCandidatePool();
-    // 熱身關卡：大人題庫前 50% 輪數抽 2 種、後 50% 抽 3 種；若選取小孩題庫，全程維持抽取 2 種圖片
+    // 熱身關卡：可自選隨機抽出圖片數目 (2~6 種，預設 2 種)
     let pickCount = cfg.count;
     if (cfg.dynamicWarmup) {
-      if (window.rosterManager.activeGroup === 'child') {
-        pickCount = 2;
-      } else {
-        const halfRound = Math.ceil(this.roundsPerLevel * 0.5);
-        pickCount = this.currentRound <= halfRound ? 2 : 3;
-      }
+      pickCount = Math.max(2, Math.min(6, this.warmupPickCount || 2));
     }
     const selectedStudents = pool.sort(() => 0.5 - Math.random()).slice(0, Math.min(pickCount, pool.length));
 

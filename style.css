@@ -161,6 +161,45 @@ body {
   gap: 6px;
 }
 
+/* 熱身模式隨機抽圖數量下拉選單 */
+.warmup-count-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  margin: 0 4px;
+  background: rgba(0, 210, 255, 0.12);
+  border: 1px solid var(--neon-blue);
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 210, 255, 0.2);
+}
+
+.warmup-count-label {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--neon-yellow);
+  white-space: nowrap;
+}
+
+.warmup-count-select {
+  background: rgba(11, 13, 25, 0.9);
+  color: #fff;
+  border: 1px solid var(--neon-green);
+  border-radius: 6px;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 700;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.warmup-count-select:focus,
+.warmup-count-select:hover {
+  border-color: #fff;
+  box-shadow: 0 0 8px var(--neon-green);
+}
+
 .level-tab.active {
   background: linear-gradient(135deg, rgba(0, 210, 255, 0.25), rgba(0, 255, 136, 0.25));
   color: #fff;
